@@ -33,7 +33,7 @@ initDb();
 // GET all posts
 app.get('/api/posts', async (req, res) => {
     try {
-        const result = await db.query('SELECT * FROM posts ORDER BY created_at DESC');
+        const result = await db.query('SELECT id, name, description, created_at as "createdAt" FROM posts ORDER BY created_at DESC');
         res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -45,7 +45,7 @@ app.post('/api/posts', async (req, res) => {
     const { name, description } = req.body;
     try {
         const result = await db.query(
-            'INSERT INTO posts (name, description) VALUES ($1, $2) RETURNING *',
+            'INSERT INTO posts (name, description) VALUES ($1, $2) RETURNING id, name, description, created_at as "createdAt"',
             [name, description]
         );
         res.status(201).json(result.rows[0]);
