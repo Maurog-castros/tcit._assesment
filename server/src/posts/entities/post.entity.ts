@@ -11,6 +11,6 @@ export class Post {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @CreateDateColumn({ type: 'timestamptz' })
+  @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt: Date;
 }
