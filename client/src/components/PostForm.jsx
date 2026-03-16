@@ -1,23 +1,31 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addPost } from '../store/postsSlice';
 
 const PostForm = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const { status, error } = useSelector((state) => state.posts);
     const dispatch = useDispatch();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!name.trim()) return;
-        dispatch(addPost({ name, description }));
-        setName('');
-        setDescription('');
+        const resultAction = await dispatch(addPost({ name, description }));
+        if (addPost.fulfilled.match(resultAction)) {
+            setName('');
+            setDescription('');
+        }
     };
 
     return (
         <form className="glass-card post-form" onSubmit={handleSubmit}>
             <h2>Create New Post</h2>
+            {error && (
+                <div className="error-message">
+                    {typeof error === 'object' ? error.message : error}
+                </div>
+            )}
             <div className="form-group">
                 <input
                     type="text"
@@ -34,7 +42,9 @@ const PostForm = () => {
                     onChange={(e) => setDescription(e.target.value)}
                 />
             </div>
-            <button type="submit" className="btn-primary">Insert</button>
+            <button type="submit" className="btn-primary" disabled={status === 'loading'}>
+                {status === 'loading' ? 'Inserting...' : 'Insert'}
+            </button>
         </form>
     );
 };

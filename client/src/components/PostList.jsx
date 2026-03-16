@@ -16,7 +16,8 @@ const PostList = () => {
         post.name.toLowerCase().includes(filter.toLowerCase())
     );
 
-    if (status === 'loading') return <div className="loader">Loading posts...</div>;
+    if (status === 'loading' && items.length === 0) return <div className="loader">Loading posts...</div>;
+    if (status === 'failed' && items.length === 0) return <div className="error-message">Error: {error}</div>;
 
     return (
         <div className="post-list">
